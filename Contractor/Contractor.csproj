@@ -8,4 +8,7 @@
     <Company />
     <Copyright>© RJ Hollberg 2017</Copyright>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
+  </ItemGroup>
 </Project>

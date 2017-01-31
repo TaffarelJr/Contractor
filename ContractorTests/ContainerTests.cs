@@ -42,12 +42,18 @@ namespace Contractor
             subject.Registry.ShouldNotBeNull();
             subject.Registry.Count.ShouldBe(2);
 
-            var registryItem = subject.Registry.First();
-            registryItem.Key.ShouldBeSameAs(identifier1);
+            var registryItem = subject.Registry
+                .Where(pair => pair.Key == identifier1)
+                .SingleOrDefault();
+
+            registryItem.ShouldNotBeNull();
             registryItem.Value.ShouldBeSameAs(factory);
 
-            registryItem = subject.Registry.Last();
-            registryItem.Key.ShouldBeSameAs(identifier2);
+            registryItem = subject.Registry
+                .Where(pair => pair.Key == identifier2)
+                .SingleOrDefault();
+
+            registryItem.ShouldNotBeNull();
             registryItem.Value.ShouldBeSameAs(factory);
         }
 
@@ -66,6 +72,53 @@ namespace Contractor
 
             // Assert
             action.ShouldThrow<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void WhenResolving_ShouldRegisterTypes()
+        {
+            // Arrange
+            var label = "bob";
+            var type = typeof(string);
+            var subject = new Container();
+
+            // Act
+            var genericTuple = subject.WhenResolving(type);
+            var labeledTuple = subject.WhenResolving(type, label);
+
+            // Assert
+            genericTuple.Container.ShouldBeSameAs(subject);
+            genericTuple.Identifier.ShouldNotBeNull();
+            genericTuple.Identifier.TypeToResolve.ShouldBeSameAs(type);
+            genericTuple.Identifier.Label.ShouldBeNull();
+
+            labeledTuple.Container.ShouldBeSameAs(subject);
+            labeledTuple.Identifier.ShouldNotBeNull();
+            labeledTuple.Identifier.TypeToResolve.ShouldBeSameAs(type);
+            labeledTuple.Identifier.Label.ShouldBe(label);
+        }
+
+        [Fact]
+        public void WhenResolving_ShouldRegisterGenericTypes()
+        {
+            // Arrange
+            var label = "bob";
+            var subject = new Container();
+
+            // Act
+            var genericTuple = subject.WhenResolving<string>();
+            var labeledTuple = subject.WhenResolving<string>(label);
+
+            // Assert
+            genericTuple.Container.ShouldBeSameAs(subject);
+            genericTuple.Identifier.ShouldNotBeNull();
+            genericTuple.Identifier.TypeToResolve.ShouldBe(typeof(string));
+            genericTuple.Identifier.Label.ShouldBeNull();
+
+            labeledTuple.Container.ShouldBeSameAs(subject);
+            labeledTuple.Identifier.ShouldNotBeNull();
+            labeledTuple.Identifier.TypeToResolve.ShouldBe(typeof(string));
+            labeledTuple.Identifier.Label.ShouldBe(label);
         }
     }
 }

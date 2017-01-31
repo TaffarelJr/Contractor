@@ -6,21 +6,22 @@ using Contractor.Lifetime;
 namespace Contractor
 {
     /// <summary>
-    /// An IoC/DI container.
+    /// The main implementation of <see cref="IContainer"/>.
     /// </summary>
-    public class Container
+    public class Container : IContainer
     {
         private readonly ConcurrentDictionary<Identifier, ILifetime> _registry = new ConcurrentDictionary<Identifier, ILifetime>();
 
         /// <summary>
-        /// Gets the type configurations registered with the container.
+        /// Gets the type configurations registered with the <see cref="IContainer"/>.
         /// </summary>
         public IReadOnlyDictionary<Identifier, ILifetime> Registry => _registry;
 
         /// <summary>
-        /// Registers a type to be resolved by the container, along with the <see cref="ILifetime"/> that will be used to resolve it.
+        /// Registers an <see cref="Identifier"/> for a type to be resolved by the <see cref="IContainer"/>,
+        /// along with the <see cref="ILifetime"/> that will be used to construct it.
         /// </summary>
-        /// <param name="identifier">The <see cref="Identifier"/> for the type to be resolved by the container.</param>
+        /// <param name="identifier">The <see cref="Identifier"/> of the type to be resolved by the container.</param>
         /// <param name="lifetime">The <see cref="ILifetime"/> that manages instances the type.</param>
         /// <exception cref="ArgumentNullException"><paramref name="identifier"/> is <b>null</b>.
         /// -or- <paramref name="lifetime"/> is <b>null</b>.</exception>

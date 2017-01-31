@@ -8,12 +8,12 @@ namespace Contractor.Factory
     public interface IFactory
     {
         /// <summary>
-        /// Gets the container to be used to resolve dependencies.
+        /// Gets the <see cref="IContainer"/> to be used to resolve dependencies.
         /// </summary>
-        Container Container { get; }
+        IContainer Container { get; }
 
         /// <summary>
-        /// The type to be constructed upon request.
+        /// The type to be constructed.
         /// </summary>
         Type ImplementationType { get; }
 

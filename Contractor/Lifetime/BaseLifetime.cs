@@ -40,7 +40,7 @@ namespace Contractor.Lifetime
         }
 
         /// <summary>
-        /// Instructs <see cref="Factory"/> to construct a new instance every time, or returns a cached instance.
+        /// Instructs <see cref="Factory"/> to construct a new instance, or returns a cached instance.
         /// </summary>
         /// <returns>A new or cached instance of <see cref="ImplementationType"/>.</returns>
         public abstract object GetInstance();

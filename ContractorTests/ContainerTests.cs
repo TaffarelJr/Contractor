@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Contractor.Internal;
 using Contractor.Lifetime;
 using Moq;
 using Shouldly;

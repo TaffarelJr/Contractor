@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Contractor.Internal;
 using Contractor.Lifetime;
 
 namespace Contractor

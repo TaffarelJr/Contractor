@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Contractor.Internal
+namespace Contractor
 {
     /// <summary>
     /// Identifies a type to be resolved by the container.

@@ -2,7 +2,7 @@
 using Shouldly;
 using Xunit;
 
-namespace Contractor.Internal
+namespace Contractor
 {
     public class IdentifierTests
     {

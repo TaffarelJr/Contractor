@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Contractor.Lifetime
 {
-    public class SingletonLifetimeTests
+    public class ContainerLifetimeTests
     {
         [Fact]
         public void Constructor_ShouldValidateParameters()
@@ -16,9 +16,9 @@ namespace Contractor.Lifetime
             var mockFactory = new Mock<IFactory>(MockBehavior.Strict);
 
             // Act
-            Action action1 = () => new SingletonLifetime(null, null);
-            Action action2 = () => new SingletonLifetime(type, null);
-            Action action3 = () => new SingletonLifetime(null, mockFactory.Object);
+            Action action1 = () => new ContainerLifetime(null, null);
+            Action action2 = () => new ContainerLifetime(type, null);
+            Action action3 = () => new ContainerLifetime(null, mockFactory.Object);
 
             // Assert
             action1.ShouldThrow<ArgumentNullException>();
@@ -34,7 +34,7 @@ namespace Contractor.Lifetime
             var mockFactory = new Mock<IFactory>(MockBehavior.Strict);
 
             // Act
-            var result = new SingletonLifetime(type, mockFactory.Object);
+            var result = new ContainerLifetime(type, mockFactory.Object);
 
             // Assert
             result.ImplementationType.ShouldBeSameAs(type);
@@ -47,7 +47,7 @@ namespace Contractor.Lifetime
             // Arrange
             var type = typeof(string);
             var mockFactory = new Mock<IFactory>(MockBehavior.Strict);
-            var subject = new SingletonLifetime(type, mockFactory.Object);
+            var subject = new ContainerLifetime(type, mockFactory.Object);
 
             // Act
             Action action = () => subject.Factory = null;
@@ -63,7 +63,7 @@ namespace Contractor.Lifetime
             var type = typeof(string);
             var mockFactory1 = new Mock<IFactory>(MockBehavior.Strict);
             var mockFactory2 = new Mock<IFactory>(MockBehavior.Strict);
-            var subject = new SingletonLifetime(type, mockFactory1.Object);
+            var subject = new ContainerLifetime(type, mockFactory1.Object);
 
             // Act
             subject.Factory = mockFactory2.Object;
@@ -73,31 +73,47 @@ namespace Contractor.Lifetime
         }
 
         [Fact]
-        public void GetInstance_ShouldConstructSingleInstance()
+        public void GetInstance_ShouldConstructSingleInstancePerLifetime()
         {
             // Arrange
             var type = typeof(string);
             var instances = new[] { "hello", "goodbye" };
-            var count = 0;
+            var count1 = 0;
+            var count2 = 1;
 
-            var mockFactory = new Mock<IFactory>(MockBehavior.Strict);
-            mockFactory
+            var mockFactory1 = new Mock<IFactory>(MockBehavior.Strict);
+            mockFactory1
                 .Setup(f => f.ConstructNewInstance())
-                .Returns(instances[count++]);
+                .Returns(instances[count1++]);
 
-            var subject = new SingletonLifetime(type, mockFactory.Object);
+            var mockFactory2 = new Mock<IFactory>(MockBehavior.Strict);
+            mockFactory2
+                .Setup(f => f.ConstructNewInstance())
+                .Returns(instances[count2--]);
+
+            var subject1 = new ContainerLifetime(type, mockFactory1.Object);
+            var subject2 = new ContainerLifetime(type, mockFactory2.Object);
 
             // Act
-            var result1 = subject.GetInstance();
-            var result2 = subject.GetInstance();
-            var result3 = subject.GetInstance();
+            var result1 = subject1.GetInstance();
+            var result2 = subject1.GetInstance();
+            var result3 = subject1.GetInstance();
+
+            var result4 = subject2.GetInstance();
+            var result5 = subject2.GetInstance();
+            var result6 = subject2.GetInstance();
 
             // Assert
             result1.ShouldBe(instances[0]);
             result2.ShouldBe(instances[0]);
             result3.ShouldBe(instances[0]);
 
-            mockFactory.VerifyAll();
+            result4.ShouldBe(instances[1]);
+            result5.ShouldBe(instances[1]);
+            result6.ShouldBe(instances[1]);
+
+            mockFactory1.VerifyAll();
+            mockFactory2.VerifyAll();
         }
     }
 }

@@ -16,13 +16,12 @@ namespace Contractor
             // Arrange
             var identifier = new Identifier(typeof(string));
             var mockLifetime = new Mock<ILifetime>(MockBehavior.Strict);
-            var factory = new Factory(mockLifetime.Object);
             var subject = new Container();
 
             // Act
             Action action1 = () => subject.Register(null, null);
             Action action2 = () => subject.Register(identifier, null);
-            Action action3 = () => subject.Register(null, factory);
+            Action action3 = () => subject.Register(null, mockLifetime.Object);
 
             // Assert
             action1.ShouldThrow<ArgumentNullException>();
@@ -38,12 +37,11 @@ namespace Contractor
             var identifier1 = new Identifier(type, "bob");
             var identifier2 = new Identifier(type, "alice");
             var mockLifetime = new Mock<ILifetime>(MockBehavior.Strict);
-            var factory = new Factory(mockLifetime.Object);
             var subject = new Container();
 
             // Act
-            subject.Register(identifier1, factory);
-            subject.Register(identifier2, factory);
+            subject.Register(identifier1, mockLifetime.Object);
+            subject.Register(identifier2, mockLifetime.Object);
 
             // Assert
             subject.Registry.ShouldNotBeNull();
@@ -54,14 +52,14 @@ namespace Contractor
                 .SingleOrDefault();
 
             registryItem.ShouldNotBeNull();
-            registryItem.Value.ShouldBeSameAs(factory);
+            registryItem.Value.ShouldBeSameAs(mockLifetime.Object);
 
             registryItem = subject.Registry
                 .Where(pair => pair.Key == identifier2)
                 .SingleOrDefault();
 
             registryItem.ShouldNotBeNull();
-            registryItem.Value.ShouldBeSameAs(factory);
+            registryItem.Value.ShouldBeSameAs(mockLifetime.Object);
         }
 
         [Fact]
@@ -70,13 +68,12 @@ namespace Contractor
             // Arrange
             var identifier = new Identifier(typeof(string));
             var mockLifetime = new Mock<ILifetime>(MockBehavior.Strict);
-            var factory = new Factory(mockLifetime.Object);
             var subject = new Container();
 
-            subject.Register(identifier, factory);
+            subject.Register(identifier, mockLifetime.Object);
 
             // Act
-            Action action = () => subject.Register(identifier, factory);
+            Action action = () => subject.Register(identifier, mockLifetime.Object);
 
             // Assert
             action.ShouldThrow<InvalidOperationException>();

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Contractor.Internal;
+using Contractor.Lifetime;
+using Moq;
 using Shouldly;
 using Xunit;
 
@@ -12,12 +14,15 @@ namespace Contractor
         public void Register_ShouldValidateParameters()
         {
             // Arrange
+            var identifier = new Identifier(typeof(string));
+            var mockLifetime = new Mock<ILifetime>(MockBehavior.Strict);
+            var factory = new Factory(mockLifetime.Object);
             var subject = new Container();
 
             // Act
             Action action1 = () => subject.Register(null, null);
-            Action action2 = () => subject.Register(new Identifier(typeof(string)), null);
-            Action action3 = () => subject.Register(null, new Factory());
+            Action action2 = () => subject.Register(identifier, null);
+            Action action3 = () => subject.Register(null, factory);
 
             // Assert
             action1.ShouldThrow<ArgumentNullException>();
@@ -29,9 +34,11 @@ namespace Contractor
         public void Register_ShouldRegisterTypeInfo()
         {
             // Arrange
-            var identifier1 = new Identifier(typeof(string), "bob");
-            var identifier2 = new Identifier(typeof(string), "alice");
-            var factory = new Factory();
+            var type = typeof(string);
+            var identifier1 = new Identifier(type, "bob");
+            var identifier2 = new Identifier(type, "alice");
+            var mockLifetime = new Mock<ILifetime>(MockBehavior.Strict);
+            var factory = new Factory(mockLifetime.Object);
             var subject = new Container();
 
             // Act
@@ -62,7 +69,8 @@ namespace Contractor
         {
             // Arrange
             var identifier = new Identifier(typeof(string));
-            var factory = new Factory();
+            var mockLifetime = new Mock<ILifetime>(MockBehavior.Strict);
+            var factory = new Factory(mockLifetime.Object);
             var subject = new Container();
 
             subject.Register(identifier, factory);

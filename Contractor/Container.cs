@@ -40,5 +40,25 @@ namespace Contractor
                 throw new InvalidOperationException($"A registry entry already exists for type '{identifier.TypeToResolve.FullName}'{labelString}");
             }
         }
+
+        /// <summary>
+        /// Returns a value indicating whether the specified type can be resolved by the <see cref="IContainer"/>.
+        /// </summary>
+        /// <param name="identifier">The <see cref="Identifier"/> of the type to be resolved by the container.</param>
+        /// <returns><b>true</b> if the specified type can be resolved by the <see cref="IContainer"/>; otherwise, <b>false</b>.</returns>
+        public bool CanResolve(Identifier identifier)
+        {
+            return Registry.ContainsKey(identifier);
+        }
+
+        /// <summary>
+        /// Returns an instance of the specified type from the <see cref="IContainer"/>.
+        /// </summary>
+        /// <param name="identifier">The <see cref="Identifier"/> of the type to be resolved by the <see cref="IContainer"/>.</param>
+        /// <returns>The instance of the specified type, as resolved by the <see cref="IContainer"/>.</returns>
+        public object Resolve(Identifier identifier)
+        {
+            return Registry[identifier].GetInstance();
+        }
     }
 }

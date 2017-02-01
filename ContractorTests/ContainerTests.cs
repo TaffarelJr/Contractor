@@ -77,5 +77,58 @@ namespace Contractor
             // Assert
             action.ShouldThrow<InvalidOperationException>();
         }
+
+        [Fact]
+        public void CanResolve_ShouldReturnFalse_WhenIdentifierIsNotInRegistry()
+        {
+            // Arrange
+            var type = typeof(string);
+            var identifier1 = new Identifier(typeof(int));
+            var identifier2 = new Identifier(type);
+            var identifier3 = new Identifier(type, "bob");
+            var identifier4 = new Identifier(type, "alice");
+            var mockLifetime = new Mock<ILifetime>(MockBehavior.Strict);
+            var subject = new Container();
+
+            subject.Register(identifier2, mockLifetime.Object);
+            subject.Register(identifier3, mockLifetime.Object);
+
+            // Act
+            var result1 = subject.CanResolve(identifier1);
+            var result2 = subject.CanResolve(identifier2);
+            var result3 = subject.CanResolve(identifier3);
+            var result4 = subject.CanResolve(identifier4);
+
+            // Assert
+            result1.ShouldBeFalse();
+            result2.ShouldBeTrue();
+            result3.ShouldBeTrue();
+            result4.ShouldBeFalse();
+        }
+
+        [Fact]
+        public void Resolve_ShouldReturnSpecifiedInstance()
+        {
+            // Arrange
+            var type = typeof(string);
+            var identifier = new Identifier(type, "bob");
+            var instance = "That's my name!";
+
+            var mockLifetime = new Mock<ILifetime>(MockBehavior.Strict);
+            mockLifetime
+                .Setup(l => l.GetInstance())
+                .Returns(instance);
+
+            var subject = new Container();
+            subject.Register(identifier, mockLifetime.Object);
+
+            // Act
+            var result = subject.Resolve(identifier);
+
+            // Assert
+            result.ShouldNotBeNull();
+            result.ShouldBeOfType<string>();
+            result.ShouldBeSameAs(instance);
+        }
     }
 }

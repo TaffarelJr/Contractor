@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Contractor.Factory
 {
@@ -7,6 +10,9 @@ namespace Contractor.Factory
     /// </summary>
     public class ConstructorInjectionFactory : BaseFactory
     {
+        private ConstructorInfo _constructor;
+        private Identifier[] _parameters;
+
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
@@ -27,7 +33,43 @@ namespace Contractor.Factory
         /// with any necessary dependencies injected into it.</returns>
         public override object ConstructNewInstance()
         {
-            throw new NotImplementedException();
+            if (_constructor == null)
+            {
+                var candidate = FindSuitableConstructor();
+
+                _constructor = candidate.Constructor;
+                _parameters = candidate.Parameters;
+            }
+
+            return _constructor.Invoke(ResolveDependencies(_parameters));
+        }
+
+        private (ConstructorInfo Constructor, Identifier[] Parameters) FindSuitableConstructor()
+        {
+            var candidate = ImplementationTypeInfo
+                .GetConstructors()
+                .Select(c =>
+                (
+                    Constructor: c,
+                    Parameters: c.GetParameters()
+                        .Select(p => new Identifier(p.ParameterType))
+                        .ToArray()
+                ))
+                .OrderByDescending(c => c.Parameters.Length)
+                .FirstOrDefault(c => c.Parameters
+                    .All(p => Container.CanResolve(p)));
+
+            if (candidate.Constructor == null)
+                throw new InvalidOperationException($"The type '{ImplementationType.FullName}' does not have all of its dependencies registered in the container.");
+
+            return candidate;
+        }
+
+        private object[] ResolveDependencies(IEnumerable<Identifier> parameters)
+        {
+            return parameters
+                .Select(p => Container.Resolve(p))
+                .ToArray();
         }
     }
 }

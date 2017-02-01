@@ -41,5 +41,34 @@ namespace Contractor.Factory
             result.ImplementationType.ShouldBeSameAs(type);
             result.ImplementationTypeInfo.ShouldBeSameAs(type.GetTypeInfo());
         }
+
+        [Fact]
+        public void ConstructNewInstance_ShouldReturnInstance()
+        {
+            // Arrange
+            var size = 10;
+            var mainIdentifier = new Identifier(typeof(string[]));
+            var dependencyIdentifier = new Identifier(typeof(int));
+
+            var mockContainer = new Mock<IContainer>(MockBehavior.Strict);
+            mockContainer
+                .Setup(c => c.CanResolve(It.Is<Identifier>( i => i == dependencyIdentifier)))
+                .Returns(true);
+            mockContainer
+                .Setup(c => c.Resolve(It.Is<Identifier>(i => i == dependencyIdentifier)))
+                .Returns(size);
+
+            var subject = new ConstructorInjectionFactory(mockContainer.Object, mainIdentifier.TypeToResolve);
+
+            // Act
+            var result = subject.ConstructNewInstance();
+
+            // Assert
+            result.ShouldNotBeNull();
+            result.ShouldBeOfType<string[]>();
+
+            var array = (string[])result;
+            array.Length.ShouldBe(size);
+        }
     }
 }

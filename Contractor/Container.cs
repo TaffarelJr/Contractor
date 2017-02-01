@@ -56,9 +56,13 @@ namespace Contractor
         /// </summary>
         /// <param name="identifier">The <see cref="Identifier"/> of the type to be resolved by the <see cref="IContainer"/>.</param>
         /// <returns>The instance of the specified type, as resolved by the <see cref="IContainer"/>.</returns>
+        /// <exception cref="InvalidOperationException">The specified type is not registered in the container.</exception>
         public object Resolve(Identifier identifier)
         {
-            return Registry[identifier].GetInstance();
+            if (Registry.TryGetValue(identifier, out ILifetime lifetime))
+                return lifetime.GetInstance();
+
+            throw new InvalidOperationException($"The type '{identifier.TypeToResolve.FullName}' is not registered in the container.");
         }
     }
 }

@@ -107,6 +107,23 @@ namespace Contractor
         }
 
         [Fact]
+        public void Resolve_ShouldThrowException_WhenTypeIsNotRegistered()
+        {
+            // Arrange
+            var identifier = new Identifier(typeof(string), "bob");
+            var mockLifetime = new Mock<ILifetime>(MockBehavior.Strict);
+
+            var subject = new Container();
+
+            // Act
+            Action action = () => subject.Resolve(identifier);
+
+            // Assert
+            action.ShouldThrow<InvalidOperationException>();
+
+        }
+
+        [Fact]
         public void Resolve_ShouldReturnSpecifiedInstance()
         {
             // Arrange

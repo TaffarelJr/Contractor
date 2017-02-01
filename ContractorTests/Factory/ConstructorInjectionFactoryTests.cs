@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Moq;
 using Shouldly;
 using Xunit;
@@ -38,6 +39,7 @@ namespace Contractor.Factory
             // Assert
             result.Container.ShouldBeSameAs(mockContainer.Object);
             result.ImplementationType.ShouldBeSameAs(type);
+            result.ImplementationTypeInfo.ShouldBeSameAs(type.GetTypeInfo());
         }
     }
 }

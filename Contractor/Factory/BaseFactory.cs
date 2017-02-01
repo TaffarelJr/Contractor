@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Contractor.Factory
 {
@@ -9,6 +10,7 @@ namespace Contractor.Factory
     {
         private readonly IContainer _container;
         private readonly Type _implementationType;
+        private readonly TypeInfo _implementationTypeInfo;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -21,6 +23,7 @@ namespace Contractor.Factory
         {
             _container = container ?? throw new ArgumentNullException(nameof(container));
             _implementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
+            _implementationTypeInfo = implementationType.GetTypeInfo();
         }
 
         /// <summary>
@@ -29,9 +32,14 @@ namespace Contractor.Factory
         public IContainer Container => _container;
 
         /// <summary>
-        /// The type to be constructed.
+        /// Gets the type to be constructed.
         /// </summary>
         public Type ImplementationType => _implementationType;
+
+        /// <summary>
+        /// Gets more detailed information about type to be constructed.
+        /// </summary>
+        public TypeInfo ImplementationTypeInfo => _implementationTypeInfo;
 
         /// <summary>
         /// Instantiates a new instance of <see cref="ImplementationType"/>

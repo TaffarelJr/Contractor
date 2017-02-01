@@ -40,51 +40,5 @@ namespace Contractor
                 throw new InvalidOperationException($"A registry entry already exists for type '{identifier.TypeToResolve.FullName}'{labelString}");
             }
         }
-
-        /// <summary>
-        /// Registers the specified type to be resolved by the container.
-        /// </summary>
-        /// <typeparam name="T">The type to be resolved by the container.</typeparam>
-        /// <returns>A tuple containing the current <see cref="Container"/> and the new
-        /// <see cref="Identifier"/> that represents to type to be resolved by the container.</returns>
-        public (Container Container, Identifier Identifier) WhenResolving<T>()
-        {
-            return WhenResolving(typeof(T), null);
-        }
-
-        /// <summary>
-        /// Registers the specified type to be resolved by the container.
-        /// </summary>
-        /// <typeparam name="T">The type to be resolved by the container.</typeparam>
-        /// <param name="label">The optional label for the type to be resolved.</param>
-        /// <returns>A tuple containing the current <see cref="Container"/> and the new
-        /// <see cref="Identifier"/> that represents to type to be resolved by the container.</returns>
-        public (Container Container, Identifier Identifier) WhenResolving<T>(string label)
-        {
-            return WhenResolving(typeof(T), label);
-        }
-
-        /// <summary>
-        /// Registers the specified type to be resolved by the container.
-        /// </summary>
-        /// <param name="typeToResolve">The type to be resolved by the container.</param>
-        /// <returns>A tuple containing the current <see cref="Container"/> and the new
-        /// <see cref="Identifier"/> that represents to type to be resolved by the container.</returns>
-        public (Container Container, Identifier Identifier) WhenResolving(Type typeToResolve)
-        {
-            return WhenResolving(typeToResolve, null);
-        }
-
-        /// <summary>
-        /// Registers the specified type to be resolved by the container.
-        /// </summary>
-        /// <param name="typeToResolve">The type to be resolved by the container.</param>
-        /// <param name="label">The optional label for the type to be resolved.</param>
-        /// <returns>A tuple containing the current <see cref="Container"/> and the new
-        /// <see cref="Identifier"/> that represents to type to be resolved by the container.</returns>
-        public (Container Container, Identifier Identifier) WhenResolving(Type typeToResolve, string label)
-        {
-            return (this, new Identifier(typeToResolve, label));
-        }
     }
 }

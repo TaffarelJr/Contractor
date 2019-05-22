@@ -85,6 +85,7 @@ namespace Contractor.Lifetime
             var mockFactory1 = new Mock<IFactory>(MockBehavior.Strict);
             mockFactory1
                 .Setup(f => f.ConstructNewInstance())
+                .Callback(() => Thread.Sleep(1000))
                 .Returns(instances[count1++]);
 
             var mockFactory2 = new Mock<IFactory>(MockBehavior.Strict);
@@ -92,6 +93,7 @@ namespace Contractor.Lifetime
             var mockFactory3 = new Mock<IFactory>(MockBehavior.Strict);
             mockFactory3
                 .Setup(f => f.ConstructNewInstance())
+                .Callback(() => Thread.Sleep(1000))
                 .Returns(instances[count3--]);
 
             var subject1 = new ThreadLifetime(type, mockFactory1.Object);

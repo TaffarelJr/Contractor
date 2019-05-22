@@ -27,10 +27,11 @@ namespace WebApplication
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc().AddControllersAsServices();
+            services.AddMvc();
 
             // Contractor stuff goes here
             var container = new Container();
+            //container.Populate(services);   <-- This is the guy I need :(
             container.WhenResolving<IDataService>().ReturnGlobalSingleton<DataService>();
             return new ContractorServiceProvider(container);
         }
